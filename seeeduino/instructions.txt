@@ -1,0 +1,16 @@
+## Hi ## 
+
+For flashing the seeedunio you need some preperations.
+
+Here are the instructions for the Arduino IDE:
+
+	Add URL for additional Boards in the preferences:
+	http://digistump.com/package_digistump_index.json,https://files.seeedstudio.com/arduino/package_seeeduino_boards_index.json
+
+	Go to Tools > board > board manager and install "Seeed SAMD Boards" (I used version 1.8.5)
+
+	Go to Tools > manage librarys and install "Adafruit NeoPixel" (I used verison 1.10.6)
+
+	Select the board: Tool > Board:"" > Seeed SAMD > Seeedunio XAIO
+
+	Also remember to use the correct serial com port
