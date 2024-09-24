@@ -2,38 +2,33 @@
 
 import rospy
 import math
-import serial
-import time
-
 from asr_flir_ptu_driver.msg import State
 from geometry_msgs.msg import Point
 from std_msgs.msg import Bool
-
-# Serial port settings
-arduino_port = '/dev/ttyACM0'
-baud_rate = 9600
-
-def send_trigger_signal():
-    with serial.Serial(arduino_port, baud_rate) as ser:
-        ser.write(b'1') # Send the trigger signal
 
 class PTUController:
     def __init__(self):
         self.state_pub = rospy.Publisher('/asr_flir_ptu_driver/state_cmd', State, queue_size=1)
         self.state_sub = rospy.Subscriber('/asr_flir_ptu_driver/ptu_state', State, self.state_callback)
         self.trigger_pub = rospy.Publisher('trigger', Bool, queue_size=10)
+        
         self.seq = 0
         self.pan_value = 20.0
         self.tilt_value = -50.0
         self.velocity = 0
         self.effort = 0
 
-    def move_ptu(self, pan, tilt,velocity,effort):
+        # To keep track of the last position where a trigger was sent
+        self.last_triggered_position = None
+
+    def move_ptu(self, pan, tilt, velocity, effort):
+        
+        # PTU parameter
         self.pan_value = pan
         self.tilt_value = tilt
         self.seq += 1
-        self.velocity=velocity
-        self.effort=effort
+        self.velocity = velocity
+        self.effort = effort
 
         movement_goal = State()
         movement_goal.state.position = [self.pan_value, self.tilt_value]
@@ -47,9 +42,8 @@ class PTUController:
         self.state_pub.publish(movement_goal)
 
     def state_callback(self, msg):
-        #rospy.loginfo("Received PTU state update: seq = %d", msg.seq_num)
+        rospy.loginfo("Received PTU state update: seq = %d", msg.seq_num)
         if msg.seq_num != self.seq:
-            #rospy.logwarn("Received message with incorrect seq_num: %d", msg.seq_num)
             return  # Ignore old or irrelevant messages
 
         if msg.finished:
@@ -58,24 +52,32 @@ class PTUController:
                                abs(self.tilt_value - msg.state.position[1]))
 
             if max_distance <= tolerance:
-                #rospy.loginfo("Movement successful. PTU reached the desired position.")
-                #self.publish_trigger(False)
-                time.sleep(3)
-                #send_trigger_signal()
-                time.sleep(1)
-                self.publish_trigger(True)
-                #rospy.loginfo("Trigger signal sent successfully!")
-            #else:
-                #rospy.logwarn("Movement failed. PTU did not reach the desired position.")
-                #self.publish_trigger(False)
+                rospy.loginfo("Movement successful. PTU reached the desired position.")
+                self.check_and_publish_trigger()
+            else:
+                rospy.logwarn("Movement failed. PTU did not reach the desired position.")
         else:
             rospy.loginfo("PTU movement in progress...")
+
+    def check_and_publish_trigger(self):
+        current_position = (self.pan_value, self.tilt_value)
+
+        # Check if the trigger was already sent for this position
+        if self.last_triggered_position is None or self.last_triggered_position != current_position:
+            # Update the last triggered position and send the trigger
+            self.last_triggered_position = current_position
+            self.publish_trigger(True)
+        else:
+            rospy.loginfo("Trigger already sent for position: pan = %f, tilt = %f", self.pan_value, self.tilt_value)
 
     def publish_trigger(self, success):
         trigger_msg = Bool()
         trigger_msg.data = success
         self.trigger_pub.publish(trigger_msg)
-        #rospy.loginfo("Published trigger message: %s", success)
+        rospy.loginfo("Published trigger message: %s", success)
+        # Wait for the shot to finish
+        rospy.sleep(2)
+
 
 class XYZPointSubscriber:
     def __init__(self, ptu_controller):
@@ -84,10 +86,15 @@ class XYZPointSubscriber:
         self.ptu_controller = ptu_controller
         self.subscriber = rospy.Subscriber('xyz_point', Point, self.callback)
 
+        # PTU Offsets
+        self.offset_x = 0       # Offset to center
+        self.offset_y = 0    # Offset to camera position
+        self.offset_z = 0.225    # Hight to ground
+
     def callback(self, data):
-        x = -data.x
-        y = (data.y-1.35)
-        h = -data.z
+        x = -(data.x - self.offset_x)
+        y = (data.y - self.offset_y)
+        h = -(data.z - self.offset_z)
 
         if y != 0:
             alpha_rad = math.atan(x / y)
@@ -95,7 +102,7 @@ class XYZPointSubscriber:
         else:
             rospy.logwarn("Received y=0, cannot calculate arctan(x/y)")
 
-        distance = math.sqrt(x**2 + y**2)
+        distance = math.sqrt(x ** 2 + y ** 2)
         if distance != 0:
             beta_rad = math.acos(h / distance)
             self.beta = math.degrees(beta_rad)
@@ -107,14 +114,7 @@ class XYZPointSubscriber:
         rospy.loginfo("Calculated beta (degrees): %f", self.beta)
 
         # Move the PTU to the calculated alpha and beta
-        self.ptu_controller.move_ptu(float(self.alpha), float(self.beta - 90), 50.0 ,50.0)
-
-        time.sleep(3)
-        send_trigger_signal()
-        time.sleep(1)
-        self.ptu_controller.publish_trigger(True)
-        rospy.loginfo("Trigger signal sent successfully!")
-
+        self.ptu_controller.move_ptu(float(self.alpha), float(self.beta - 90), 200.0, 200.0)
 
 if __name__ == '__main__':
     rospy.init_node('ptu_controller', anonymous=True)

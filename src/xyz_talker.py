@@ -41,6 +41,6 @@ class CoordinateSender:
 
 if __name__ == '__main__':
     rospy.init_node('coordinate_sender', anonymous=True)
-    points_file = rospy.get_param('~points_file', '/home/bseeger/catkin_ws/src/ros_ptu_controller/scripts/points.json')
+    points_file = rospy.get_param('~points_file', '/home/bseeger/catkin_ws/src/ros_ptu_controller/src/misc/fre_points.json')
     coordinate_sender = CoordinateSender(points_file)
     rospy.spin()
