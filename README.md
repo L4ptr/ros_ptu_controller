@@ -1,6 +1,6 @@
 # ROS PTU Controller
 
-[![PTU Controller Image](image/IMG-20240921-WA0002.jpg)](image/IMG-20240921-WA0002.jpg)
+[![PTU Controller Image](images/IMG-20240921-WA0002.jpg)](images/IMG-20240921-WA0002.jpg)
 
 ## Overview
 
