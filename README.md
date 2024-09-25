@@ -1,8 +1,14 @@
 # PTU Control ROS Package
 
-<a href="images/fre_aufbau.JPG">
-    <img src="images/fre_aufbau.JPG" alt="PTU Controller Image" width="400"/>
-</a>
+<p align="center">
+    <a href="images/fre_aufbau.JPG">
+        <img src="images/fre_aufbau.JPG" alt="PTU Controller Image" width="400"/>
+    </a>
+    <a href="images/Spritzenhalter_720.png">
+        <img src="images/Spritzenhalter_720.png" alt="Spritzenhalter Image" width="400"/>
+    </a>
+</p>
+
 
 ## Overview
 
@@ -19,7 +25,7 @@ Before using this package, make sure you have the following installed:
 
 ### Installation
 
-1. Install the required libraries.
+1. Install the required libraries for the ASR driver.
 
     Install the WxWidget library (version 3.0):
     ```bash
@@ -81,10 +87,4 @@ Before starting, ensure the PTU is securely mounted, connected via the RS-232 in
 
 ## License
 
-This project is licensed under the [LICENSE NAME]. See the [LICENSE](./LICENSE) file for details.
-
----
-
-## Contributing
-
-Pull requests are welcome! If you plan major changes, please open an issue first to discuss the proposed changes.
+Free use.
