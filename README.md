@@ -5,7 +5,7 @@
         <img src="images/fre_aufbau.JPG" alt="PTU Controller Image" width="450"/>
     </a>
     <a href="images/Spritzenhalter_720.png">
-        <img src="images/Spritzenhalter_720.png" alt="Spritzenhalter Image" width="510"/>
+        <img src="images/Spritzenhalter_720.png" alt="Spritzenhalter Image" width="580"/>
     </a>
 </p>
 
