@@ -1,31 +1,19 @@
 # ROS PTU Controller
 
-[![PTU Controller Image](image/ptu_setup.png)](image/ptu_setup.png)
+[![PTU Controller Image](image/IMG-20240921-WA0002.jpg)](image/IMG-20240921-WA0002.jpg)
 
 ## Overview
 
-This repository contains a ROS (Robot Operating System) package for controlling a Pan-Tilt Unit (PTU) using ROS nodes. The goal of this project is to provide a flexible and easy-to-use interface for controlling PTU hardware through ROS, enabling the integration of pan-tilt control in various robotic applications.
-
----
-
-## Features
-
-- **PTU Motion Control**: Smooth and precise control of the PTU for both panning and tilting.
-- **ROS Integration**: Built with ROS, making it easy to integrate into existing robotic systems.
-- **Visualization**: Visualize the current state of the PTU through ROS topics.
-- **Real-time Feedback**: Receive real-time feedback from the PTU regarding its current position and status.
-
----
-
-## Installation
+This repository contains a ROS package for controlling a Pan-Tilt Unit (PTU) and different components using ROS nodes. It enable the use of kartesian koordiantes und was designed for the participation on the FRE 2024. It contains the CAD files used for mounting on a Directed Perception/Flir D47 PTU.
 
 ### Prerequisites
 
 Before using this package, make sure you have the following installed:
 
-- **ROS (Noetic, Melodic, etc.)**
-- **PTU hardware and drivers**
-- **Python 3.x** (if the controller is written in Python)
+- **ROS (Noetic)**
+- **PTU hardware with serial connection**
+- ROS <a href="https://wiki.ros.org/asr_flir_ptu_driver">ASR driver</a>
+- **Python 3.x**
 
 ### Instructions
 
@@ -57,7 +45,9 @@ Before using this package, make sure you have the following installed:
 1. Launch the PTU controller:
 
     ```bash
-    roslaunch ptu_controller ptu_control.launch
+    rosrun ros_ptu_controller controller.py
+    rosrun ros_ptu_controller trigger_listener.py
+    rosrun ros_ptu_controller xyz_talker.py
     ```
 
 2. To control the PTU, you can publish to the corresponding ROS topics for panning and tilting:
