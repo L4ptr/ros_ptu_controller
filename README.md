@@ -2,10 +2,10 @@
 
 <p align="center">
     <a href="images/fre_aufbau.JPG">
-        <img src="images/fre_aufbau.JPG" alt="PTU Controller Image" width="300"/>
+        <img src="images/fre_aufbau.JPG" alt="PTU Controller Image" width="320"/>
     </a>
     <a href="images/Spritzenhalter_720.png">
-        <img src="images/Spritzenhalter_720.png" alt="Spritzenhalter Image" width="350"/>
+        <img src="images/Spritzenhalter_720.png" alt="Spritzenhalter Image" width="370"/>
     </a>
 </p>
 
